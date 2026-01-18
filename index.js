@@ -12,10 +12,11 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const MongoStore = require("connect-mongo");
 
+// Models
 const User = require("./models/user");
 
 // ==========================
-// DATABASE (ATLAS)
+// DATABASE (MONGODB ATLAS)
 // ==========================
 const dbUrl = process.env.ATLASDB_URL;
 
@@ -23,8 +24,12 @@ mongoose.set("strictQuery", true);
 
 mongoose
   .connect(dbUrl)
-  .then(() => console.log("Connected to MongoDB Atlas"))
-  .catch(err => console.log("Mongo error:", err));
+  .then(() => {
+    console.log("✅ Connected to MongoDB Atlas");
+  })
+  .catch((err) => {
+    console.log("❌ MongoDB connection error:", err);
+  });
 
 // ==========================
 // VIEW ENGINE
@@ -41,15 +46,18 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // ==========================
-// SESSION STORE (ATLAS FIX ✅)
+// SESSION STORE (FIXED FOR CONNECT-MONGO v5+ ✅)
+// ==========================
+// ==========================
+// SESSION STORE (STABLE ✅)
 // ==========================
 const store = MongoStore.create({
   mongoUrl: dbUrl,
-  secret: process.env.SESSION_SECRET,
-  touchAfter: 24 * 3600, // 1 day
+  collectionName: "sessions",
+  touchAfter: 24 * 3600 // 1 day
 });
 
-store.on("error", e => {
+store.on("error", function (e) {
   console.log("SESSION STORE ERROR:", e);
 });
 
@@ -61,15 +69,16 @@ const sessionConfig = {
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-  },
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+  }
 };
 
 app.use(session(sessionConfig));
 app.use(flash());
 
+
 // ==========================
-// PASSPORT
+// PASSPORT CONFIG
 // ==========================
 app.use(passport.initialize());
 app.use(passport.session());
@@ -102,6 +111,8 @@ app.use("/listings/:id/reviews", reviewRouter);
 // ==========================
 // SERVER
 // ==========================
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
