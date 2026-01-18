@@ -1,47 +1,94 @@
-/* body {
-    background-color: pink;
-} */
+/* =========================
+   GLOBAL
+========================= */
+
+body {
+  background-color: #ffffff;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+/* =========================
+   NAVBAR
+========================= */
 
 .navbar {
-    height: 5rem;
-    background-color: white;
+  height: 5rem;
+  background-color: white;
 }
 
 .fa-compass {
-    color: #fe424d;
-    font-size: 2rem;
+  color: #fe424d;
+  font-size: 2rem;
 }
 
 .nav-link {
-    color: #222222 !important;
+  color: #222222 !important;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.f-info {
+  background-color: #f8f9fa;
+  padding: 2rem 0;
+  text-align: center;
+  margin-top: 4rem;
+  border-top: 1px solid #dee2e6;
 }
 
 .f-info-links a {
-    color: #222222 !important;
-    text-decoration: none;
-}
-.f-info-links a:hover {
-    text-decoration: underline;
-}
-.f-info {
-    background-color: #f8f9fa;
-    padding: 2rem 0;
-    text-align: center;
-    margin-top: 4rem;
-    padding: 2rem 0;
-    border-top: 1px solid #dee2e6;
+  color: #222222 !important;
+  text-decoration: none;
 }
 
-/* Ensures all images have the same height */
+.f-info-links a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   LISTING CARDS (IMPORTANT)
+========================= */
+
+.listing-card {
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.listing-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Image styling */
+.listing-img {
+  height: 230px;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Card body */
+.card-body {
+  padding: 1rem;
+  text-align: center;
+}
+
+/* =========================
+   REMOVE OLD CARD EFFECTS
+========================= */
+
+/* ❌ DO NOT USE THESE ANYMORE */
+/*
 .card-img-top {
   height: 200px;
-  object-fit: cover;  /* crops extra parts of image neatly */
+  object-fit: cover;
   border-radius: 1rem !important;
-}
-
-/* Optional: make cards a bit more elegant */
-.card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
@@ -49,19 +96,89 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.card-body {
-  padding: 1rem;
+.hover-card { }
+.object-fit-cover { }
+*/
+
+/* =========================
+   STAR RATING (REVIEWS ONLY)
+========================= */
+
+.star-rating {
+  direction: rtl;
+  display: inline-flex;
+  font-size: 1.8rem;
 }
 
-/* Card hover effect */
-  .hover-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
-  }
-  .hover-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-  }
-  .object-fit-cover {
-    object-fit: cover;
-  }
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out, transform 0.1s;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: gold;
+  transform: scale(1.15);
+}
+
+.star-rating input:checked ~ label {
+  color: gold;
+}
+
+/* ---------- ICON ROW ---------- */
+.category-scroll {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.category-scroll::-webkit-scrollbar { display: none; }
+
+.category-item {
+  text-align: center;
+  color: #717171;
+  cursor: pointer;
+  font-size: 0.85rem;
+  min-width: 80px;
+}
+
+.category-item i {
+  font-size: 1.35rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.category-item:hover,
+.category-item.active {
+  color: #000;
+  border-bottom: 2px solid #000;
+}
+
+/* SEARCH BAR */
+.input-group .form-control {
+  border-radius: 999px 0 0 999px;
+}
+.input-group .btn {
+  border-radius: 0 999px 999px 0;
+}
+
+/* CARD image consistent */
+.card-img-top {
+  height: 240px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+
+/* hover for cards (optional) */
+.hover-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.hover-card:hover { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }

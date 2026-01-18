@@ -1,0 +1,37 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <h3>Edit Review</h3>
+
+  <form
+    action="/listings/<%= listingId %>/reviews/<%= review._id %>?_method=PUT"
+    method="POST"
+  >
+
+    <div class="mb-3">
+      <label class="form-label">Rating</label>
+      <input
+        type="range"
+        name="review[rating]"
+        min="1"
+        max="5"
+        value="<%= review.rating %>"
+        class="form-range"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Comment</label>
+      <textarea
+        name="review[comment]"
+        class="form-control"
+        rows="4"
+        required
+      ><%= review.comment %></textarea>
+    </div>
+
+    <button class="btn btn-primary">Update Review</button>
+    <a href="/listings/<%= listingId %>" class="btn btn-secondary">Cancel</a>
+
+  </form>
+</div>

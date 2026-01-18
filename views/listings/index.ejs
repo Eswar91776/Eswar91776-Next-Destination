@@ -1,34 +1,96 @@
-<% layout('/layouts/boilerplate') -%>
+<% layout('/layouts/boilerplate') %>
 
-<h1 class="mb-4 mt-2 text-center" style="color:#0077ff; font-weight:700;">
-  Next Destination
-</h1>
+<div class="container my-4">
 
+  <!-- TOP: SEARCH + TAX TOGGLE -->
+  <div class="d-flex align-items-center justify-content-between mb-3 gap-3">
+    <!-- Search (center-like) -->
+    <div class="flex-grow-1 me-3">
+      <div class="input-group">
+        <input id="searchInput" type="text" class="form-control" placeholder="Search destinations (title or location)">
+        <button id="searchBtn" class="btn btn-danger">Search</button>
+        <button id="clearSearchBtn" class="btn btn-outline-secondary">Clear</button>
+      </div>
+    </div>
 
-<div class="container">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    <!-- Tax toggle -->
+    <div class="form-check form-switch ms-3" style="white-space: nowrap;">
+      <input class="form-check-input" type="checkbox" id="taxToggle">
+      <label class="form-check-label" for="taxToggle">Display total after taxes</label>
+    </div>
+  </div>
+
+  <!-- ICON ROW -->
+  <div class="category-scroll mb-4">
+    <div class="category-item active">
+      <i class="fa-solid fa-fire"></i>
+      <span>Trending</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-bed"></i>
+      <span>Rooms</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-city"></i>
+      <span>Iconic Cities</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-mountain"></i>
+      <span>Mountains</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-chess-rook"></i>
+      <span>Castles</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-person-swimming"></i>
+      <span>Amazing Pools</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-campground"></i>
+      <span>Camping</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-tractor"></i>
+      <span>Farms</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-snowflake"></i>
+      <span>Arctic</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-archway"></i>
+      <span>Domes</span>
+    </div>
+    <div class="category-item">
+      <i class="fa-solid fa-ship"></i>
+      <span>Boats</span>
+    </div>
+  </div>
+
+  <!-- LISTING GRID -->
+  <div class="row g-4" id="listingsGrid">
     <% allListings.forEach(listing => { %>
-      <div class="col">
-        <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden hover-card">
-            <div class="ratio ratio-4x3">
-              <img 
-                src="<%= listing.image.url %>" 
-                alt="<%= listing.title %>" 
-                class="card-img-top object-fit-cover"
-                onerror="this.src='https://picsum.photos/400/300?random=1'">
-            </div>
-            <div class="card-body text-center">
-              <h5 class="card-title mb-1"><%= listing.title %></h5>
-              <p class="text-muted small mb-1"><%= listing.location %>, <%= listing.country %></p>
-              <p class="fw-semibold text-success mb-0">
-                ₹<%= listing.price.toLocaleString('en-IN') %>
-              </p>
-            </div>
+      <div class="col-md-4 listing-card">
+        <div class="card hover-card h-100">
+          <img src="<%= listing.image?.url || '/images/placeholder.jpg' %>" class="card-img-top object-fit-cover" alt="<%= listing.title %>">
+          <div class="card-body">
+            <h5 class="card-title mb-1"><%= listing.title %></h5>
+            <p class="text-muted small mb-2 card-location"><%= listing.location %>, <%= listing.country %></p>
+
+            <!-- price element stores base price in data attribute -->
+            <p class="fw-semibold text-success mb-2 price" data-base-price="<%= typeof listing.price === 'number' ? listing.price : (listing.price || 0) %>">
+              ₹<%= (typeof listing.price === 'number') ? listing.price.toLocaleString('en-IN') : (listing.price || '0') %>
+            </p>
+
+            <p class="small text-muted mb-2">Owner: <%= listing.owner?.username || 'Unknown' %></p>
+
+            <a href="/listings/<%= listing._id %>" class="btn btn-outline-primary w-100">View Listing</a>
           </div>
-        </a>
+        </div>
       </div>
     <% }) %>
+
+    
   </div>
 </div>
-<style>
