@@ -12,7 +12,9 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const MongoStore = require("connect-mongo");
 
-// Models
+// ==========================
+// MODELS
+// ==========================
 const User = require("./models/user");
 
 // ==========================
@@ -28,7 +30,7 @@ mongoose
     console.log("✅ Connected to MongoDB Atlas");
   })
   .catch((err) => {
-    console.log("❌ MongoDB connection error:", err);
+    console.error("❌ MongoDB connection error:", err);
   });
 
 // ==========================
@@ -46,15 +48,12 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // ==========================
-// SESSION STORE (FIXED FOR CONNECT-MONGO v5+ ✅)
-// ==========================
-// ==========================
 // SESSION STORE (STABLE ✅)
 // ==========================
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   collectionName: "sessions",
-  touchAfter: 24 * 3600 // 1 day
+  touchAfter: 24 * 3600, // 1 day
 });
 
 store.on("error", function (e) {
@@ -69,13 +68,14 @@ const sessionConfig = {
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
-  }
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  },
 };
 
 app.use(session(sessionConfig));
 app.use(flash());
-
 
 // ==========================
 // PASSPORT CONFIG
@@ -103,6 +103,11 @@ app.use((req, res, next) => {
 const listingRouter = require("./routes/listing");
 const reviewRouter = require("./routes/review");
 const userRouter = require("./routes/user");
+
+// ✅ ROOT ROUTE (FIXES "Cannot GET /")
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
 
 app.use("/", userRouter);
 app.use("/listings", listingRouter);
