@@ -12,10 +12,12 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const MongoStore = require("connect-mongo");
 
-// ==========================
-// MODELS
-// ==========================
 const User = require("./models/user");
+
+// ==========================
+// TRUST PROXY (RENDER FIX ✅)
+// ==========================
+app.set("trust proxy", 1);
 
 // ==========================
 // DATABASE (MONGODB ATLAS)
@@ -26,12 +28,8 @@ mongoose.set("strictQuery", true);
 
 mongoose
   .connect(dbUrl)
-  .then(() => {
-    console.log("✅ Connected to MongoDB Atlas");
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
+  .then(() => console.log("✅ Connected to MongoDB Atlas"))
+  .catch(err => console.log("❌ MongoDB error:", err));
 
 // ==========================
 // VIEW ENGINE
@@ -48,15 +46,15 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // ==========================
-// SESSION STORE (STABLE ✅)
+// SESSION STORE (WORKS LOCAL + RENDER)
 // ==========================
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   collectionName: "sessions",
-  touchAfter: 24 * 3600, // 1 day
+  touchAfter: 24 * 3600
 });
 
-store.on("error", function (e) {
+store.on("error", e => {
   console.log("SESSION STORE ERROR:", e);
 });
 
@@ -70,8 +68,8 @@ const sessionConfig = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-  },
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  }
 };
 
 app.use(session(sessionConfig));
@@ -91,33 +89,34 @@ passport.deserializeUser(User.deserializeUser());
 // GLOBAL VARIABLES
 // ==========================
 app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
-  res.locals.currentUser = req.user;
   next();
 });
 
 // ==========================
 // ROUTES
 // ==========================
-const listingRouter = require("./routes/listing");
-const reviewRouter = require("./routes/review");
-const userRouter = require("./routes/user");
+const listingRoutes = require("./routes/listing");
+const reviewRoutes = require("./routes/review");
+const userRoutes = require("./routes/user");
 
-// ✅ ROOT ROUTE (FIXES "Cannot GET /")
+app.use("/", userRoutes);
+app.use("/listings", listingRoutes);
+app.use("/listings/:id/reviews", reviewRoutes);
+
+// ==========================
+// HOME REDIRECT
+// ==========================
 app.get("/", (req, res) => {
   res.redirect("/listings");
 });
-
-app.use("/", userRouter);
-app.use("/listings", listingRouter);
-app.use("/listings/:id/reviews", reviewRouter);
 
 // ==========================
 // SERVER
 // ==========================
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

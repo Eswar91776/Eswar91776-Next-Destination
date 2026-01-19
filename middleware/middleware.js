@@ -3,6 +3,9 @@ const Review = require("../models/review");
 const { listingSchema, reviewSchema } = require("../schema");
 const ExpressError = require("../utils/ExpressError");
 
+// ==========================
+// LOGIN CHECK
+// ==========================
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     req.session.redirectUrl = req.originalUrl;
@@ -12,6 +15,9 @@ module.exports.isLoggedIn = (req, res, next) => {
   next();
 };
 
+// ==========================
+// LISTING OWNER CHECK
+// ==========================
 module.exports.isOwner = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing.owner.equals(req.user._id)) {
@@ -21,6 +27,21 @@ module.exports.isOwner = async (req, res, next) => {
   next();
 };
 
+// ==========================
+// PREVENT OWNER REVIEWING OWN LISTING
+// ==========================
+module.exports.isNotOwner = async (req, res, next) => {
+  const listing = await Listing.findById(req.params.id);
+  if (listing.owner.equals(req.user._id)) {
+    req.flash("error", "You cannot review your own listing!");
+    return res.redirect(`/listings/${req.params.id}`);
+  }
+  next();
+};
+
+// ==========================
+// REVIEW AUTHOR CHECK
+// ==========================
 module.exports.isReviewAuthor = async (req, res, next) => {
   const review = await Review.findById(req.params.reviewId);
   if (!review.author.equals(req.user._id)) {
@@ -30,6 +51,9 @@ module.exports.isReviewAuthor = async (req, res, next) => {
   next();
 };
 
+// ==========================
+// VALIDATION
+// ==========================
 module.exports.validateListing = (req, res, next) => {
   const { error } = listingSchema.validate(req.body);
   if (error) {
@@ -46,10 +70,12 @@ module.exports.validateReview = (req, res, next) => {
   next();
 };
 
+// ==========================
+// SAVE REDIRECT URL
+// ==========================
 module.exports.saveRedirectUrl = (req, res, next) => {
   if (req.session.redirectUrl) {
     res.locals.redirectUrl = req.session.redirectUrl;
   }
   next();
 };
-
