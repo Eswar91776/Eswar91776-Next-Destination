@@ -1,4 +1,8 @@
 require("dotenv").config();
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
+require("dotenv").config();
 
 const express = require("express");
 const app = express();
@@ -116,7 +120,8 @@ app.get("/", (req, res) => {
 // ==========================
 // SERVER
 // ==========================
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on 0.0.0.0:${PORT}`);
 });
